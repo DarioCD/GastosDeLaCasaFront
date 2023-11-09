@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import UsuarioService from "../../services/usuario.service";
+import TokenService from "../../services/token.service";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -38,17 +39,16 @@ const Register = () => {
             );
             return;
           }
-
-          response.json().then((response) => {
-            localStorage.setItem("idUsuario", response.idUsuario);
-          });
+          if (response.status === 200) {
+            await TokenService.loginJWT(inputsData);
+          }
           Swal.fire(
             "Registro realizado correctamente",
             "Le llegará un email de confirmación",
             "success"
           );
+
           navigate("/");
-          localStorage.setItem("idUsuario", "si");
         } catch (error) {
           console.log(error);
         }

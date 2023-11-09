@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import TokenService from "../../services/token.service";
-
-const Home = () => {
+import Swal from "sweetalert2";
+const HomeLogin = () => {
   const token = localStorage.getItem("token");
 
   const [inputsData, setinputsData] = useState("");
@@ -17,6 +17,7 @@ const Home = () => {
     async function insertUsuario() {
       try {
         const response = await TokenService.decodeToken(token);
+        console.log(response);
         if (response.status !== 200) {
           navigate("/");
           return;
@@ -40,4 +41,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomeLogin;
