@@ -3,8 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import UsuarioService from "../../services/usuario.service";
 import TokenService from "../../services/token.service";
+import { toast } from "react-toastify";
 
-const Register = () => {
+const Register = ({ setUserData }) => {
   const navigate = useNavigate();
 
   const initialInputsData = {
@@ -12,7 +13,7 @@ const Register = () => {
     apellidos: "",
     email: "",
     password: "",
-    sueldo: 0,
+    sueldo: "",
     verifyPaswword: "",
   };
 
@@ -32,36 +33,59 @@ const Register = () => {
         try {
           const response = await UsuarioService.register(inputsData);
           if (response.status !== 200) {
-            Swal.fire(
-              "Error en el registro",
+            toast.error(
               `El email ${inputsData.email} ya ha sido registrado previamente`,
-              "error"
+              {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+              }
             );
             return;
           }
           if (response.status === 200) {
+            response.json().then((data) => {
+              setUserData(data.message);
+            });
             await TokenService.loginJWT(inputsData);
+            toast.success(`¡ Sesión iniciada con éxito !`, {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
+            navigate("/home");
           }
-          Swal.fire(
-            "Registro realizado correctamente",
-            "Le llegará un email de confirmación",
-            "success"
-          );
-
-          navigate("/");
         } catch (error) {
-          console.log(error);
+          throw error;
         }
       } else {
-        Swal.fire("ERROR", "Las contraseñas no coinciden", "error");
+        toast.error(`¡ Las contraseñas no coinciden !`, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       }
     }
     insertUsuario();
   };
 
   return (
-    <div>
-      <h1>Register</h1>
+    <div className="loginContainer" style={{height : "110vh"}}>
       <form className="formularioLogin" onSubmit={handleOnSubmit}>
         <div>
           <label htmlFor="nombre" className="text-secondary">

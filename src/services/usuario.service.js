@@ -39,9 +39,28 @@ const register = async (data) => {
   }
 };
 
+const getUserByEmail = async (data, token) => {
+  try {
+    const response = await fetch(`${API_URL}/usuario/email`, {
+      method: "POST",
+      body: JSON.stringify({
+        email: data.sub,
+      }),
+      headers: {
+        "Content-type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
 const UsuarioService = {
   login,
   register,
+  getUserByEmail
 };
 
 export default UsuarioService;

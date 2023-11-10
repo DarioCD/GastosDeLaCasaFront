@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import TokenService from "../../services/token.service";
 import UsuarioService from "../../services/usuario.service";
-import Swal from "sweetalert2";
-import {toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-const Login = () => {
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+const Login = ({setUserData}) => {
   const navigate = useNavigate();
 
   const initialInputsData = {
@@ -28,7 +27,7 @@ const Login = () => {
       try {
         const response = await UsuarioService.login(inputsData);
         if (response.status !== 200) {
-          toast.error('¡Correo o contraseña incorrectos!', {
+          toast.error("¡Correo o contraseña incorrectos!", {
             position: "top-right",
             autoClose: 2000,
             hideProgressBar: false,
@@ -37,10 +36,13 @@ const Login = () => {
             draggable: true,
             progress: undefined,
             theme: "light",
-            });
+          });
           return;
         }
         if (response.status === 200) {
+          response.json().then((data) => {
+            setUserData(data.message);
+          });
           await TokenService.loginJWT(inputsData);
           toast.success(`¡ Sesión iniciada con éxito !`, {
             position: "top-right",
@@ -51,8 +53,8 @@ const Login = () => {
             draggable: true,
             progress: undefined,
             theme: "light",
-            });
-          //navigate("/home");
+          });
+          navigate("/home");
         }
       } catch (error) {
         console.log(error);
@@ -61,8 +63,7 @@ const Login = () => {
     insertUsuario();
   };
   return (
-    <div>
-      <h1>Login</h1>
+    <div className="loginContainer">
       <form className="formularioLogin" onSubmit={handleOnSubmit}>
         <div>
           <label htmlFor="email" className="text-secondary">
@@ -107,7 +108,7 @@ const Login = () => {
         <div className="text-center">
           <p className="mb-0">¿No tienes cuenta?</p>
           <Link to={"/register"} className="registerLink">
-            <b>Accede aquí</b>
+            <b>Registrate aquí</b>
           </Link>
         </div>
       </form>

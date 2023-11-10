@@ -30,6 +30,7 @@ const decodeToken = async (data) => {
       }),
       headers: {
         "Content-type": "application/json",
+        "Authorization": `Bearer ${data}`
       },
     });
     return response;
